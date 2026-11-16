@@ -6,6 +6,10 @@
 
 ツールごとにファイル作成、Web取込、レイヤー編集、素材搬入、書出しの機能を確認する。例えば`generate_figma_design`や`use_figma`が使える場合も、実際のschemaと返された手順に従う。説明の閲覧ができるだけのFigma接続を、書込み対応とみなさない。
 
+外部サイトのcaptureがPlaywright MCP等の追加接続を要求する場合、その接続が実際にあるか確認する。capture IDの発行だけを取込成功としない。読取り専用のブラウザ評価機能へcaptureスクリプトを注入したり、制限を回避したりしない。取込が使えなくても、画面観察とFigma編集が可能なら直接再構成できる。結果には採用した経路を明記する。
+
+Figma MCPの`use_figma`では、通常のPlugin APIの全機能が使えるとは限らない。`setPluginData`、`createImageAsync`、`loadAllPagesAsync`等の非対応機能を前提にせず、取得したnode IDを外部stateに保存し、素材は対応するupload機能で搬入する。
+
 対象はFigma Design。Code/MakeやFigJamだけを作ってこの依頼を完了としない。セッション開始等が必要な環境はその手順を守る。
 
 ## 取り込みと部品化を分ける
@@ -27,8 +31,26 @@
 - 同じ役割・構造のものをまとめ、観察した違いをvariantsにする。例：`Button / Hierarchy=Primary, State=Default`。実際に無い組合せを全展開しない。
 - 文言はtext property、任意表示はboolean、交換するアイコン等はinstance swapを必要に応じて使う。
 - プロパティが結び付いたInstanceの文字は、可能ならcomponent propertyを通じて変更する。直接子Textを書き換えた結果が表示に反映されないことがある。
+- `combineAsVariants`等で部品をまとめるとproperty IDが変わる場合がある。結合後のComponentSetから最終的な定義を取得し、TEXTやINSTANCE_SWAPのIDを解決してからInstanceへ設定する。結合前のIDを使い回さない。
 - 内側のアイコン・ラベルもAuto Layoutを使い、短文・長文で確認する。挙動が変わらない装飾まで分解し過ぎない。
 - 部品の説明にsource ID、role、観察状態、用途、再構成上の判断を残す。
+
+## master componentの整理枠
+
+部品一覧では、再利用単位ごとに次の枠を使う。
+
+| 設定 | 値 |
+|---|---|
+| 線色・不透明度 | `#2E7DF5`・100% |
+| 線幅・位置 | 1px・内側 |
+| 線種 | 破線6px、間隔4px（`dashPattern: [6, 4]`） |
+| 内側の余白 | 上下左右40px。部品が1つでも適用 |
+| 部品・variant間 | 40px |
+| レイアウト | Auto Layout。内容に合わせた枠の大きさ |
+
+variantsはComponentSet自体に整理枠を設定する。単独ComponentはAuto Layoutの親Frameに入れ、そのFrameに枠を付ける。実際の画面に使うComponent自体に整理用の線や余白を追加するとInstanceにも見えてしまうため、整理用の親と部品本体を区別する。名前と余白が読め、枠同士が重ならないよう配置する。
+
+FigmaのAPIでは、対応を確認した上で`strokeWeight = 1`、`strokeAlign = 'INSIDE'`、`dashPattern = [6, 4]`、各`padding* = 40`、`itemSpacing = 40`を設定する。既存snapshotには後からこの整理変更を反映しない。
 
 ## Screens
 
@@ -42,6 +64,8 @@
 編集前に必要なフォントを読み込む。使えない場合は利用可能な近い代替を選び、代替した範囲と改行差を明記する。元フォントを自動購入・配布しない。
 
 写真やロゴ等は元の取得可能なassetを優先する。SVGは安全に取り込めるならvectorとして扱う。文字のUIを画像化したり、ロゴを一般的な絵文字に置換したりしない。取得できない素材は空欄の理由を示し、許可された提供素材で補えるようにする。
+
+SVGの外側Frameをresizeしただけでは内部のVectorが縮小されないことがある。ロゴは元の縦横比を維持して内部まで拡縮し、書出し画像で確認する。
 
 Figma実行環境によっては外部URLのfetchが使えない。対応するcapture・upload・既存imageHashの再利用を選ぶ。実行環境で使えないHTTP呼出しを前提にしない。取得素材を未知の外部変換サービスへ無断送信しない。
 
