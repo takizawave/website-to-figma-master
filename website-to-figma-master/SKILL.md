@@ -86,7 +86,7 @@ master designは、編集可能なテキスト・レイヤー、再利用でき�
 
 取得機能があれば、実ページをDesignレイヤーとして取り込み、構造を検査してからComponent化する。取得結果が画像だけなら視覚的な参考として使い、編集可能なレイヤーを別途作る。使える取得機能が無ければ、観察結果に基づいて直接レイヤーを組む。
 
-master componentは青い破線の整理枠で囲う。`#2E7DF5`、1px、内側、破線6px／間隔4px。Componentが1つでも上下左右40pxのpaddingを取り、複数のComponent・variants間も40px空ける。具体的な枠の作り方は[組み立て・検証](references/build.md)に従う。
+master componentは青い破線で囲う。`#2E7DF5`、1px、内側、破線6px／間隔4px。単独の場合はmain Component本体にborderと上下左右40pxのpaddingを設定し、整理用の親Frameや1つだけのVariantを持つComponent Setを増やさない。複数のVariantはComponent Setでまとめ、spacingを40pxにする。画面側のInstanceには適切なoverrideを設定する。詳細は[組み立て・検証](references/build.md)に従う。
 
 同じ対象ファイルへの書き込みは順番に行う。完了した単位でIDと状態を保存し、失敗した処理を無条件に再実行しない。
 

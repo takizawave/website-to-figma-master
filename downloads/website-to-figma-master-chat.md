@@ -92,7 +92,7 @@ master designは、編集可能なテキスト・レイヤー、再利用でき�
 
 取得機能があれば、実ページをDesignレイヤーとして取り込み、構造を検査してからComponent化する。取得結果が画像だけなら視覚的な参考として使い、編集可能なレイヤーを別途作る。使える取得機能が無ければ、観察結果に基づいて直接レイヤーを組む。
 
-master componentは青い破線の整理枠で囲う。`#2E7DF5`、1px、内側、破線6px／間隔4px。Componentが1つでも上下左右40pxのpaddingを取り、複数のComponent・variants間も40px空ける。具体的な枠の作り方は[組み立て・検証](#build)に従う。
+master componentは青い破線で囲う。`#2E7DF5`、1px、内側、破線6px／間隔4px。単独の場合はmain Component本体にborderと上下左右40pxのpaddingを設定し、整理用の親Frameや1つだけのVariantを持つComponent Setを増やさない。複数のVariantはComponent Setでまとめ、spacingを40pxにする。画面側のInstanceには適切なoverrideを設定する。詳細は[組み立て・検証](#build)に従う。
 
 同じ対象ファイルへの書き込みは順番に行う。完了した単位でIDと状態を保存し、失敗した処理を無条件に再実行しない。
 
@@ -258,7 +258,11 @@ Component一覧では、再利用単位ごとに次の枠を使う。
 | Component・variant間 | 40px |
 | レイアウト | Auto Layout。内容に合わせた枠の大きさ |
 
-variantsはComponentSet自体に整理枠を設定する。単独ComponentはAuto Layoutの親Frameに入れ、そのFrameに枠を付ける。実際の画面に使うComponent自体に整理用の線や余白を追加するとInstanceにも見えてしまうため、整理用の親とComponent本体を区別する。名前と余白が読め、枠同士が重ならないよう配置する。
+単独の場合はmain Component本体にborderとpaddingを設定し、余分な親Frameや1つだけのVariantを持つComponent Setを追加しない。複数のVariantがある場合はComponent Set自体に設定する。Component本体と内容に必要なlayerを残し、整理のためだけの階層を増やさない。名前とpaddingが読め、Component同士が重ならないよう配置する。
+
+単独Component本体の整理用border・paddingは、新しいInstanceにも継承される。画面や他のComponent内で使うInstanceは、整理用borderを非表示にし、元サイトに合うpadding・width・heightへoverrideする。編集可能なInstanceとしての参照は保つ。
+
+既存Componentの整理方法を変更するときは、依存するInstanceのサイズ・padding・layout・内容を先に記録し、変更後に復元して画像で比較する。元のComponent IDを保ち、外側の整理Frameだけを外す。ネストしたInstanceの座標を直接overrideできない環境では、Auto LayoutとFILL/FIXEDの設定で配置・拡縮を保つ。中身を取り出すと空のComponent Setが自動削除される場合があるため、削除前に存在を確認する。
 
 FigmaのAPIでは、対応を確認した上で`strokeWeight = 1`、`strokeAlign = 'INSIDE'`、`dashPattern = [6, 4]`、各`padding* = 40`、`itemSpacing = 40`を設定する。既存snapshotには後からこの整理変更を反映しない。
 

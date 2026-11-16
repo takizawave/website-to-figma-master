@@ -48,7 +48,11 @@ Component一覧では、再利用単位ごとに次の枠を使う。
 | Component・variant間 | 40px |
 | レイアウト | Auto Layout。内容に合わせた枠の大きさ |
 
-variantsはComponentSet自体に整理枠を設定する。単独ComponentはAuto Layoutの親Frameに入れ、そのFrameに枠を付ける。実際の画面に使うComponent自体に整理用の線や余白を追加するとInstanceにも見えてしまうため、整理用の親とComponent本体を区別する。名前と余白が読め、枠同士が重ならないよう配置する。
+単独の場合はmain Component本体にborderとpaddingを設定し、余分な親Frameや1つだけのVariantを持つComponent Setを追加しない。複数のVariantがある場合はComponent Set自体に設定する。Component本体と内容に必要なlayerを残し、整理のためだけの階層を増やさない。名前とpaddingが読め、Component同士が重ならないよう配置する。
+
+単独Component本体の整理用border・paddingは、新しいInstanceにも継承される。画面や他のComponent内で使うInstanceは、整理用borderを非表示にし、元サイトに合うpadding・width・heightへoverrideする。編集可能なInstanceとしての参照は保つ。
+
+既存Componentの整理方法を変更するときは、依存するInstanceのサイズ・padding・layout・内容を先に記録し、変更後に復元して画像で比較する。元のComponent IDを保ち、外側の整理Frameだけを外す。ネストしたInstanceの座標を直接overrideできない環境では、Auto LayoutとFILL/FIXEDの設定で配置・拡縮を保つ。中身を取り出すと空のComponent Setが自動削除される場合があるため、削除前に存在を確認する。
 
 FigmaのAPIでは、対応を確認した上で`strokeWeight = 1`、`strokeAlign = 'INSIDE'`、`dashPattern = [6, 4]`、各`padding* = 40`、`itemSpacing = 40`を設定する。既存snapshotには後からこの整理変更を反映しない。
 

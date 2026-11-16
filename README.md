@@ -83,7 +83,9 @@ master componentは、**青い破線（#2E7DF5）**で囲います。
 - **Componentが1つでも、上下左右に40pxのpadding。**
 - ComponentやVariant間のspacingも40px。
 
-単独のComponentは親Frameに入れ、borderと40pxのpaddingを設定します。Variantがある場合は、Component Setに同じ設定を適用します。
+単独の場合は、**main Component本体**にborderと40pxのpaddingを設定します。整理用の親Frameや1つだけのVariantを持つComponent Setは追加しません。複数のVariantがある場合は、Component Setに設定します。
+
+画面で使うInstanceには、整理用borderを非表示にするoverrideと、実画面に合うpadding・サイズを設定します。
 
 ### Reactやログイン後の画面でも使える？
 
