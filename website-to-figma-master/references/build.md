@@ -2,7 +2,7 @@
 
 ## 書き込む前
 
-保存先file keyを確認し、既存のページ、コンポーネント、変数、スタイルと人が整理した配置を読む。名前だけで既存物を自分の作成物と判断しない。過去に記録したIDまたは自分の管理用metadataを優先する。
+保存先file keyを確認し、既存のページ、Component、変数、スタイルと人が整理した配置を読む。名前だけで既存物を自分の作成物と判断しない。過去に記録したIDまたは自分の管理用metadataを優先する。
 
 ツールごとにファイル作成、Web取込、レイヤー編集、素材搬入、書出しの機能を確認する。例えば`generate_figma_design`や`use_figma`が使える場合も、実際のschemaと返された手順に従う。説明の閲覧ができるだけのFigma接続を、書込み対応とみなさない。
 
@@ -12,9 +12,9 @@ Figma MCPの`use_figma`では、通常のPlugin APIの全機能が使えると�
 
 対象はFigma Design。Code/MakeやFigJamだけを作ってこの依頼を完了としない。セッション開始等が必要な環境はその手順を守る。
 
-## 取り込みとコンポーネント化を分ける
+## 取り込みとComponent化を分ける
 
-取得された画面にFrame、Text、Vectorがあっても、そのままでは再利用可能なmasterになっていないことがある。取込後はレイヤーを読み、代表要素をComponentにしてから画面内の同じ要素をInstanceに置換する。変数やテキストスタイルへの結付けも別に確認する。
+取得された画面にFrame、Text、Vectorがあっても、そのままでは再利用可能なmasterになっていないことがある。取込後はレイヤーを読み、代表要素をComponentにしてから画面内の同じ要素をInstanceに置換する。変数やText Styleへの結付けも別に確認する。
 
 要素の切り出し前に、繰返し範囲、文字の変更点、状態、幅に対する挙動を見極める。単に大量のFrameを一括でComponent化しない。
 
@@ -22,39 +22,39 @@ Figma MCPの`use_figma`では、通常のPlugin APIの全機能が使えると�
 
 - 元サイトのCSS token名が分かる場合は説明に保存する。Figma名に使う場合はその環境の命名制約に合わせる。
 - 同じ値でも役割が違うsemantic tokenは、元の根拠があれば区別する。元の定義が不明なら過剰な階層を作らない。
-- 色は透明度も含めて記録する。テキストスタイルはfamily、style/weight、size、line-height、letter-spacingを揃える。
-- 余白・角丸などは対応する変数型とbind可能なプロパティを使う。環境が対応しない場合は値と理由を説明に残す。
+- 色は透明度も含めて記録する。Text Styleはfamily、style/weight、size、line-height、letter-spacingを揃える。
+- 余白・角丸などは対応する変数型とbind可能なpropertyを使う。環境が対応しない場合は値と理由を説明に残す。
 - dark mode等は観察したmodeだけを作る。画面全体の色を機械的に反転して補完しない。
 
 ## Components
 
 - 同じ役割・構造のものをまとめ、観察した違いをvariantsにする。例：`Button / Hierarchy=Primary, State=Default`。実際に無い組合せを全展開しない。
 - 文言はtext property、任意表示はboolean、交換するアイコン等はinstance swapを必要に応じて使う。
-- プロパティが結び付いたInstanceの文字は、可能ならcomponent propertyを通じて変更する。直接子Textを書き換えた結果が表示に反映されないことがある。
-- `combineAsVariants`等でコンポーネントをまとめるとproperty IDが変わる場合がある。結合後のComponentSetから最終的な定義を取得し、TEXTやINSTANCE_SWAPのIDを解決してからInstanceへ設定する。結合前のIDを使い回さない。
+- propertyが結び付いたInstanceの文字は、可能ならcomponent propertyを通じて変更する。直接子Textを書き換えた結果が表示に反映されないことがある。
+- `combineAsVariants`等でComponentをまとめるとproperty IDが変わる場合がある。結合後のComponentSetから最終的な定義を取得し、TEXTやINSTANCE_SWAPのIDを解決してからInstanceへ設定する。結合前のIDを使い回さない。
 - 内側のアイコン・ラベルもAuto Layoutを使い、短文・長文で確認する。挙動が変わらない装飾まで分解し過ぎない。
-- コンポーネントの説明にsource ID、role、観察状態、用途、再構成上の判断を残す。
+- Componentの説明にsource ID、role、観察状態、用途、再構成上の判断を残す。
 
 ## master componentの整理枠
 
-コンポーネント一覧では、再利用単位ごとに次の枠を使う。
+Component一覧では、再利用単位ごとに次の枠を使う。
 
 | 設定 | 値 |
 |---|---|
 | 線色・不透明度 | `#2E7DF5`・100% |
 | 線幅・位置 | 1px・内側 |
 | 線種 | 破線6px、間隔4px（`dashPattern: [6, 4]`） |
-| 内側の余白 | 上下左右40px。コンポーネントが1つでも適用 |
-| コンポーネント・variant間 | 40px |
+| padding | 上下左右40px。Componentが1つでも適用 |
+| Component・variant間 | 40px |
 | レイアウト | Auto Layout。内容に合わせた枠の大きさ |
 
-variantsはComponentSet自体に整理枠を設定する。単独ComponentはAuto Layoutの親Frameに入れ、そのFrameに枠を付ける。実際の画面に使うComponent自体に整理用の線や余白を追加するとInstanceにも見えてしまうため、整理用の親とコンポーネント本体を区別する。名前と余白が読め、枠同士が重ならないよう配置する。
+variantsはComponentSet自体に整理枠を設定する。単独ComponentはAuto Layoutの親Frameに入れ、そのFrameに枠を付ける。実際の画面に使うComponent自体に整理用の線や余白を追加するとInstanceにも見えてしまうため、整理用の親とComponent本体を区別する。名前と余白が読め、枠同士が重ならないよう配置する。
 
 FigmaのAPIでは、対応を確認した上で`strokeWeight = 1`、`strokeAlign = 'INSIDE'`、`dashPattern = [6, 4]`、各`padding* = 40`、`itemSpacing = 40`を設定する。既存snapshotには後からこの整理変更を反映しない。
 
 ## Screens
 
-- まず共通コンポーネントを作り、画面はInstanceで組む。個別の文章や画像はoverrideとして設定する。
+- まず共通Componentを作り、画面はInstanceで組む。個別の文章や画像はoverrideとして設定する。
 - 縦積み、横並び、wrap、hug、fill、固定幅等を観察した挙動に合わせる。絶対配置は重ね合わせや装飾など意味がある箇所に限る。
 - CSS pxの寸法をFigmaの論理単位に対応させる。高DPR画像のpixel数をそのまま画面幅に使わない。
 - gridやsticky、動的な表、アニメーションの全挙動はFigmaの静的な画面では一致しないことがある。観察状態を再現し、差をNotesに残す。
@@ -73,7 +73,7 @@ Figma実行環境によっては外部URLのfetchが使えない。対応するc
 
 ## 確認の手順
 
-1. 代表コンポーネントを一つと代表画面を一つ作り、構造と画像を確認してから同じ方法を展開する。
+1. 代表Componentを一つと代表画面を一つ作り、構造と画像を確認してから同じ方法を展開する。
 2. 元画像とFigmaを同じ幅・状態・範囲で比較する。full-pageとviewportを混同せず、長い画面は区間で比較する。
 3. 差分は「位置・寸法」「文字・折返し」「色・表面」「素材」「状態・欠落」に分ける。大きな差から直す。
 4. 編集可能なText、Component/Instanceの対応、variables/style bindings、未読込フォント、overflowを調べる。
