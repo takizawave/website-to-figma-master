@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+website-master.config.json
+website-master.state.json
+source-inventory.md
+design-spec.json
+figma-plugin/
+snapshots/
+captures/
+private/
+work/

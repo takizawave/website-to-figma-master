@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "projectId": null,
+  "sourceOfTruth": "observed-website",
+  "sourceUrls": [],
+  "scope": "provided-pages",
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 900 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "locale": null,
+  "theme": "as-observed",
+  "states": ["default"],
+  "target": {
+    "fileUrl": null,
+    "fileKey": null,
+    "createIfMissing": true
+  },
+  "pages": {
+    "source": "00 Source",
+    "foundations": "01 Foundations",
+    "components": "02 Components",
+    "screens": "03 Screens",
+    "changelog": "04 更新履歴",
+    "snapshots": "05 Snapshots",
+    "notes": "99 Notes"
+  },
+  "untouchedPageIds": [],
+  "legacyPrefix": "old_",
+  "snapshots": {
+    "enabled": true,
+    "cadence": "monthly",
+    "dayOfMonth": 1,
+    "localTime": "09:00",
+    "timezone": null,
+    "mode": "snapshot-only",
+    "include": ["screens", "components", "foundations"],
+    "retain": "indefinitely",
+    "overwriteExisting": false,
+    "freezeBindings": true,
+    "exportScreenImages": true,
+    "schedulerTaskId": null,
+    "schedulerStatus": "not-configured"
+  },
+  "lastRunId": null
+}
